@@ -1,0 +1,67 @@
+//payroll- Daniel Entrikin- Daniel.entrikin@gmail.com
+
+#include "stdafx.h"
+float Payroll[6][6]={{0},{1, 16.25},{2, 9.65},{3,17.25},{4,23.50},{5, 37.50}};
+
+void HoursWorked(void)
+{  //Filling column 0
+	int row = 0, col = 2;
+	int basepay = 0, hoursOfovertime = 0, overtimerate = 0, overtimepay = 0;
+	float hours = 0;
+	
+	for(row = 1; row < 6; ++row)
+		{
+		//Enter hours 
+		printf("Enter hours:\n");    //user inputs hours 
+		printf("   #%i: ",row);      //hours are printed
+		scanf("%f",&hours);          //read hours for calculations
+		
+		if(hours > 37.5)                        //conditions set for overtime hours
+		{
+		basepay = 37.5 * Payroll[row][1];       //standard pay under 37.5 hours
+
+		hoursOfovertime = hours - 37.5;         //total hours of overtime
+
+		overtimerate = Payroll[row][1] * 1.5;   //pay rate for overtime hours
+
+		overtimepay = hoursOfovertime * overtimerate;   //total pay for overtime
+
+		Payroll[row][3] = overtimepay + basepay  //overall pay including standard     								  and overtime 
+
+		Payroll[row][col] = hours;                      //hours 
+		
+		Payroll[row][4]=(Payroll[row][1]*hours)-((Payroll[row][1]*hours)/ 3);
+                                                                          //net pay
+
+		Payroll[row][5] = ((Payroll[row][1] * hours) / 3); //amount deducted
+		}
+		else if(hours < 37.5)                   //conditions set for regular hours
+		{
+		Payroll[row][col] = hours;                  //hours 
+		
+		Payroll[row][3] = Payroll[row][1] * hours;  //gross pay
+
+		Payroll[row][4]=(Payroll[row][1] * hours)-((Payroll[row][1] * hours) / 3); 												//net pay
+
+		Payroll[row][5] = ((Payroll[row][1] * hours) / 3); //amount deducted
+		}
+		}
+}
+void PrintTable(void)
+{
+	int row, col;
+	for(row = 1; row < 6; ++row)
+    {
+		printf("%5i\t",row);
+	   for(col = 1; col < 6; ++col)
+		 printf("%8.2f\t",Payroll[row][col]);
+       printf("\n");
+	}
+}
+int main(void)
+{
+HoursWorked();
+printf("\nEmployee   Rate \t   Hours   \t  Gross Pay \t  Net Pay     Deductions\n");
+PrintTable();
+	return 0;
+}
