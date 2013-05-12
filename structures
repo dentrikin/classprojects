@@ -1,0 +1,69 @@
+// Daniel Entrikin- Daniel.entrikin@gmail.com- Structures - Payroll.cpp : 
+
+#include "stdafx.h"
+#include <stdio.h>
+#define MAX 6
+#define REGULAR_HOURS 40.0
+
+struct emp_s
+{  int employee_num;
+	float hourly_rate;
+	float hours;
+	float gross;
+	float overtime_hours;
+
+};
+
+void PrintEachCell(struct emp_s A)
+{
+	printf("\n\nEmployee number: %i\n", A.employee_num);
+	
+	printf("Employee's hourly rate: %.2f\n", A.hourly_rate);//reg. rate for reg. hours
+
+	printf("Employee's hours: %.2f\n",A.hours); //total hours
+
+	printf("Overtime Hours: %.2f\n",A.overtime_hours); //OT hours only
+
+	printf("Employee's gross pay: %.2f\n",A.gross); //total pay
+}
+
+void PrintByCell(struct emp_s B[])
+{
+	int n;
+	 printf("The following is the payroll information by\nemployee for the hours you 	have entered.\n");
+	for(n = 1; n < MAX; ++n)
+ 	   PrintEachCell(B[n]);
+
+}
+
+struct emp_s LoadTheHours(struct emp_s B)
+{
+	printf("Enter the employee's hours: ");
+	scanf("%f", &B.hours);
+	{
+	if(B.hours > 40)   //establishes rules for hours over 40 (OT hours)
+		B.overtime_hours = B.hours - 40;
+	}
+	{
+	if(REGULAR_HOURS > 40)//Keeps OT and regular hours separate, caps reg. hours at 40
+		REGULAR_HOURS == 40;
+	}
+	B.gross = (REGULAR_HOURS * B.hourly_rate) + ((B.hourly_rate*1.5) * B.overtime_hours ); //finds gross
+	return(B);
+}
+
+int main(void)
+{
+	int n;
+	
+	struct emp_s Payroll[MAX]={{0},{1,16.25},{2,9.65},{3,17.25},{4,23.50},{5,37.50}} ;
+
+	printf("Please enter employee hours worked, including overtime.\n");
+	for(n = 1; n < MAX; ++n)
+		Payroll[n] = LoadTheHours(Payroll[n]);
+
+	PrintByCell(Payroll);
+	
+
+	return 0;
+}
