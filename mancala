@@ -1,0 +1,268 @@
+//Mancala- Daniel Entrikin-      Daniel.entrikin@gmail.com
+
+#include"stdafx.h"
+#include<string>   //Simplifies the use of strings 
+#include<iostream>   //This has to be included for the program to compile, because of the vectors.
+#include<vector>     /*Using vectors seemed to simplify things, even though I realize this makes it more of a C++ program
+Vectors are covered in the next few chapters of the book, so I thought it would be OK to use them*/
+using namespace std; //This also has to be included for the program to compile, because of the vectors.
+
+struct space{        //structure for initial board layout
+
+	int stones;      //number of stones
+
+	space(){
+		stones=5;    //All spaces start with 5 stones. Some versions of Mancala have different rules about how many stones players start with.
+		}            //I decided to use this set of rules to make the game take fewer turns to win. This number can be changed easily for fewer/more turns
+		~space(){};
+		int get_stones(){
+		return stones;
+			}
+
+		void add_stones(int s){  //adding stones
+			stones += s;
+			}
+
+		void sub_stones(int s){  //subtracting stones
+			stones -= s;
+			}
+
+		int empty(void){        //empty spaces
+			return (stones == 0);
+			}
+
+};              //end space structure
+
+struct player{ //player structure
+
+	int board;       //game board
+	int stolen_space;
+	int playernum;  //player 1 or 2
+	static int number;
+	int turn;       //needed to cycle through turns
+	string namen;   //string for name n
+	vector<space> playerspace; 
+	/*Could use a multi-dimensional array here? Using Vector makes the program shorter and simpler,
+	fewer lines of code and less room for error.It seems like a better way to do it, overall. */
+
+	player(string n){
+
+		board = 0;
+		stolen_space = -1;
+		playernum = ++number;//increment number
+		turn = true;
+		namen = n;
+
+		for (int i=0; i<6; i++)	
+			playerspace.push_back(space());//create 6 spaces for the game board
+		}
+
+	~player(){};
+
+	int move (int spacenumber){
+
+		turn = false;
+
+		stolen_space = -1;
+
+		int temp=playerspace[spacenumber].get_stones(); //int temp for this structure
+
+		if (playerspace[spacenumber].get_stones() + spacenumber >= playerspace.size()){
+
+			if (playerspace[spacenumber].get_stones() + spacenumber == playerspace.size())
+
+				turn = true; 
+				playerspace[spacenumber].sub_stones(1);
+				add_board(1);
+				}
+		
+		int stones = playerspace[spacenumber].get_stones();
+
+		for (int i=spacenumber+1;i<playerspace.size() && stones != 0; i++, stones--){ //decrement stones
+
+			if (temp + spacenumber < playerspace.size() && stones == 1 && playerspace[i].empty()){
+				playerspace[spacenumber].sub_stones(1); 
+				steal_opponent_space(i);
+				add_board(1);
+
+				stones--; //decrement stones
+
+				break;
+				}
+
+				playerspace[i].add_stones(1);
+				playerspace[spacenumber].sub_stones(1);
+				}
+
+				if (stones != 0){
+				playerspace[spacenumber].sub_stones(stones);
+				return stones;
+			}
+			return 0;
+	}
+	int move_to_opponent(int stones){ //Rules for movement of stones to opponent spaces
+		for (int i=0; i<playerspace.size()&& stones != 0; i++,stones--){
+			playerspace[i].add_stones(1);
+			}
+			return stones;
+	}
+
+	void steal_opponent_space (int spacenumber){ //stealing opponent stones
+		stolen_space = (spacenumber-5) * (-1); 
+		}
+	int get_stolen_space()
+
+	{return stolen_space;}
+
+		int get_opponent_stones(int spacenumber){	//return stones which have been stolen
+			int stones = playerspace[spacenumber].get_stones();
+			playerspace[spacenumber].sub_stones(stones);
+			return stones;
+			}
+
+	int playerturn(void){ //Current player's turn
+		return turn;
+		}
+
+	void set_turn(int b){ //Next player's turn
+		turn = b;
+		}
+
+	int space_empty(int spacenumber){ //Rules for selection of an empty space
+		return playerspace[spacenumber].empty();
+		}
+
+	int empty (void){ //if all the spaces of the current player are empty
+		int sum=0;
+			for (int i=0; i<6; i++)
+				sum += playerspace[i].get_stones();
+				return (sum==0);
+				}
+
+	void add_board(int s){
+		board += s;
+		}
+
+	int get_board(){
+		return board;
+		}
+
+	string get_name(){
+		return namen;
+		}
+
+	void print_board(){ //print board layout
+		
+		if (playernum == 1)
+			for (int i=5; i>=0; i--)
+				cout << playerspace[i].get_stones() << "\t"; //cout works well here and keeps the code simple. 
+
+			else
+				for (int i=0; i<6; i++)
+				cout << playerspace[i].get_stones() << "\t"; //Tabs between spaces make board easier to read
+				printf("\n");  }
+
+}; //end player structure
+
+int player::number = 0;
+
+void clear_main(){
+	printf("\n"); //whitespace
+}
+
+void main(){ //begin main
+
+	vector<player>plist;
+
+	plist.push_back(player("\n")); //whitespace
+
+	plist.push_back(player("\n"));//whitespace
+
+	int pp=0;							  //Player one (top) goes first
+
+	printf("_________________________\n");//Box around instructions for a nicer looking UI
+	printf("|__Welcome to Mancala!__|\n");//Welcome and basic instructions
+	printf("|_______________________|______________________________________________\n");
+	printf("|-Player One starts on the top section of the board and goes first.    |\n");
+	printf("|-Player Two starts on the bottom section of the board and goes second.|\n");
+	printf("|-Take turns with a partner. The first player with 30 stones wins.     |\n");
+	printf("| Good luck!                                                           |\n");
+	printf("|______________________________________________________________________|\n");
+
+	clear_main();
+
+	do{ //begin do while for user input. Entering letters or other characters causes endless loop or error and program crash.
+
+		while (plist[pp].playerturn()){
+
+			int choice;              //user chooses space to move from
+
+			printf("******************************************\n");//Lines to make board
+
+			plist[0].print_board();  //board results for each turn
+
+			printf("******************************************\n");//Lines to make board
+
+			plist[1].print_board(); //board results for each turn
+
+			printf("******************************************\n");//Lines to make board
+
+			printf("\nWhich space would you like to move from? "); //selection of space user wants to move stones out of
+
+			printf("\nChoose a number between 0 and 5: ");		   //player makes number choice
+			scanf("%i", &choice);	//read number choice
+
+			if (choice > 5 || plist[pp].space_empty(choice)){      //if user picks a number over 5, or picks an empty space, display 'invalid' message
+				printf("\nEmpty or invalid choice! Please pick again (0-5 only)"); //Message if player picks an invalid number
+
+				clear_main();
+
+				continue;
+			}
+			else{	//stolen stones statements
+
+				int return_stones = 0;
+
+				int move_to_opponent = plist[pp].move(choice);			//Begin player move (same for player 1 and player 2)
+
+				if (move_to_opponent != 0)								//If space number + number of stones in that space > own spaces, +1
+					return_stones = plist[(pp+1)%2].move_to_opponent(move_to_opponent);//stones left over after that go to players opponent space
+				
+				if (return_stones != 0){								//If the players left over stones > players opponent space
+					return_stones = plist[(pp)].move_to_opponent(return_stones); //Then,  those stones come back to the players own spaces
+				}
+
+				if (plist[pp].get_stolen_space()!=-1){							
+					int spacenumber = plist[pp].get_stolen_space();		//If the last stone goes to the players own empty space
+					int stones = plist[(pp+1)%2].get_opponent_stones(spacenumber); //Then that player gets those stones towards the 30 needed to win
+					plist[pp].add_board(stones);
+
+				}
+				clear_main();
+			}
+		}
+
+		pp = (pp+1)%2;		//Go to player 2's turn
+		plist[pp].set_turn(true);
+		
+	}while (plist[0].get_board()<31 && plist[1].get_board()<31 && !plist[0].empty() && !plist[1].empty());
+	//Game ends if a player gets 30 or more points or all spaces they can choose from are empty 
+
+	printf("******************************************\n");//Lines to make board
+
+	plist[0].print_board();          //Final board results
+
+	printf("******************************************\n");//Lines to make board
+
+	plist[1].print_board();          //Final board results
+
+	printf("******************************************\n");//Lines to make board
+
+	if (plist[0].get_board() > plist[1].get_board())
+		printf("\nPlayer 1 wins! "); //Winning message for player one at end of game
+
+	else if (plist[0].get_board() == plist[1].get_board())
+		printf("\nGame ends tied "); //Message in the case of a tie
+
+	else printf("\nPlayer 2 wins! ");//Winning message for player two at end of game
+}
