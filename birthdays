@@ -1,0 +1,158 @@
+// birthdays.cpp : Defines the entry point for the console application.
+//Daniel Entrikin- Daniel.entrikin@gmail.com
+
+
+/****Structure Declarations*****/
+struct sname
+{
+	char first[20];
+	char last[30];
+};
+
+struct saddress
+{
+	char num[5];
+	char street[20];
+	char city[20];
+	char state[3];
+	char zip[11];
+};
+
+struct sphone
+{
+	char area[4];
+	char exchange[4];
+	char number[5];
+};
+
+struct sdate
+{
+	int month;
+	int day;
+	int year;
+};
+/********************* structures 2 ***************/
+struct sphone2
+{
+	struct sphone home;
+	struct sphone cell;
+	struct sphone work;
+};
+
+struct sentry
+{
+	struct sname Name;
+	struct saddress Address;
+	struct sphone2 Phone;
+	struct sdate birthday;
+}Book[MAX] = {{"Sam", "Jones", "15","South St", "Lowell", "MA", "01854-3333", "978", "454", "1234", "978", "454", "2834", "978", "454", "6434"},
+			 {"Cam","Nunez","427A","North St", "Lowell", "MA", "01854-3345", "884", "545", "4321", "978", "545", "5321", "978", "545", "9301"}};
+//These are the two people entered into the database
+/*******************FUNCTIONS************************/
+
+void PrintBook(void)
+{
+	int n;
+
+	for(n=0; n<MAX; ++n)
+	{
+		printf("%s, %s",Book[n].Name.last, Book[n].Name.first);
+		printf("\t%s %s,", Book[n].Address.num, Book[n].Address.street); 
+		printf(" %s, %s  %s\n",Book[n].Address.city, Book[n].Address.state, Book[n].Address.zip);
+		printf("Home:  (%s) %s-%s\n",Book[n].Phone.home.area, Book[n].Phone.home.exchange, Book[n].Phone.home.number);
+		printf("Cell:  (%s) %s-%s\n",Book[n].Phone.cell.area, Book[n].Phone.cell.exchange, Book[n].Phone.cell.number);
+		printf("Work:  (%s) %s-%s\n",Book[n].Phone.work.area, Book[n].Phone.work.exchange, Book[n].Phone.work.number);
+		printf("Birthday:  %i - %i -  %i    \n\n",Book[n].birthday.month, Book[n].birthday.day, Book[n].birthday.year);
+
+	}
+}
+
+void SearchByLast(void)
+{//The user enters a last name and the program prints the list of people with that name
+	int n = 0;
+
+	printf("\n\nEnter a last name: ");
+	scanf("%s",&Book[n].Name.last); //program takes in last name
+
+	if(Book[n].Name.last == Book[n].Name.last)    //if the name entered matches one in the database
+		{
+			printf("%s , %s\n",&Book[n].Name.first,&Book[n].Name.last); //print the matching name
+		}
+	
+}
+void SearchByFirst(void)
+{//The user enters a first name and the program prints the list of people with that name
+	int n = 0;
+
+	printf("\n\nEnter a first name: "); //program takes in first name
+	scanf("%s",&Book[n].Name.first);
+
+	if(Book[n].Name.first== Book[n].Name.first)   //if the name entered matches one in the database
+		{
+			printf("%s , %s\n" ,&Book[n].Name.last,&Book[n].Name.first); //print the matching name
+		}
+	
+}
+
+void EnterBirthdays(void)
+{
+	int n;
+
+	for(n=0; n<MAX; ++n)
+	{
+		printf("Birthdays:  m d yyyy\n"); //prompt user for birthdays, show format for entry
+		printf("%s %s: ",Book[n].Name.first, Book[n].Name.last); //display which person you are entering a birthday for
+		scanf_s("%i %i %i",&Book[n].birthday.month, &Book[n].birthday.day, &Book[n].birthday.year); //scan in birthdays for those entries
+	}//the compiler was telling me that scanf_s was more stable here
+}
+void SearchBirthdayMonth(void)
+{//The user enters a month and the program prints the list of people with that month
+	int n, m;
+
+	printf("\n\nEnter the month: "); //user enters a month
+	scanf_s("%i",&m); //the compiler was telling me that scanf_s was more stable here too
+
+	for(n=0; n<MAX; ++n)
+	{
+		if(Book[n].birthday.month == m) 
+		{
+			printf("%s %s\n ",Book[n].Name.first, Book[n].Name.last);  //print the database entry which matches the month entered
+		}
+	}
+}
+void SearchAreaCode(void)
+{
+	int n, s=0, flag = 0;
+	char code[4];
+
+	printf("Enter Area Code: ");
+	scanf("%s",code); //read in a 3 digit area code
+
+	for(n=0; n<MAX; ++n)
+	{
+		do
+		{
+			if(Book[n].Phone.home.area[s] == code[s])
+				flag = 1;
+			else
+				flag = 0;
+			++s; //increment if there is no match, continue
+
+		}while (flag == 1 && s < 4);
+		
+		if(flag == 1) //while the code is less than 4 digits and finds a match
+			printf("%s %s\n ",Book[n].Name.first, Book[n].Name.last); //print the name of that match
+	}
+}
+
+int main(void)
+{
+	EnterBirthdays();
+	PrintBook();
+	SearchByLast();
+	SearchByFirst();
+	SearchAreaCode();
+	SearchBirthdayMonth();
+	
+	return 0;
+}
