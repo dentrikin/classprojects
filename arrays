@@ -1,0 +1,85 @@
+//Arrays- Daniel Entrikin- Daniel.entrikin@gmail.com
+
+#include "stdafx.h"
+#include <stdio.h>
+int number[20];
+void print_array(void)     //prints the array and the index (1-20)
+  {int index;
+	for(index=0; index < 20; ++index)
+		printf("%i \t",number[index]);
+	}
+void one_to_twenty(void)  //declares the 20 element array
+{	int index;
+	for(index=0; index<20; ++index)
+		number[index] = index + 1;
+}
+void triple_array(void)   //multiplies each element by three
+{	int index;
+	for(index = 0; index < 20; ++index)
+		number[index] = number[index] * 3;
+}	
+int main(void)
+{	
+	int number[20];
+	one_to_twenty( );
+	print_array( );
+	triple_array( );
+	print_array( );
+void mean(int answer[]);             //function prototype 
+void mode(int freq[], int answer[]); //function proto.
+#define SIZE 100                     //sets value of SIZE
+int response[SIZE] =                 //array of 100 responses 
+{ 6, 7, 8, 9, 8, 7, 8, 9, 7, 8, 9, 8, 9, 8, 9, 5, 9, 8, 7, 8, 7, 8, 6, 7, 8, 9, 3, 9, 8, 7, 8, 9, 9, 8, 9, 8, 9, 8, 9, 7, 8, 9, 6, 7, 8, 7, 8, 7, 9, 7, 6, 5, 3, 5, 6, 7, 2, 5, 3, 9, 4, 6, 4, 7, 8, 9, 6, 8, 7, 8, 9, 7, 8, 7, 4, 4, 3, 6, 4, 6, 7, 5, 6, 4, 5, 6, 1, 6, 5, 7, 8, 5, 3, 6, 3, 5, 7, 5, 8, 9};
+int frequency[10] = {0};
+mean(response); 
+mode(frequency, response); 
+return 0;               //end main 
+} 
+void mean(int answer[]) //begin mean function
+{
+int y;                  //loop counter 
+int total = 0;          //total response values 
+for (y = 0; y <= SIZE - 1; y++) 
+	{
+	total += answer[y];
+	} 
+printf("\nThe mean is: %d / %d = %f\n\n", total, SIZE, (double)total/SIZE);
+}                        //end function mean 
+void mode(int freq[], int answer[]) //find the mode
+{
+int rate;		     //loop counter 
+int loop;		     //loop counter 
+int largest =0;	     //represents largest frequency 
+int array[10] ={0};      //array for largest freq. 
+int count =0;	           //set count to zero
+for (rate =1; rate <=9; rate++) {       
+freq[rate] = 0;          //set freq. to 0
+  } 
+  for (loop =0; loop <= SIZE -1; loop++) {//increment array freq.
+	++freq[answer[loop]];
+  } 
+    printf("Table:  Number  Frequency   Histogram\n");
+for (rate = 1; rate <= 9; rate++) { //display values,freq.
+    printf( "\t%d\t%d\t ", rate, freq[rate]);
+if (freq[rate] > largest) {         //test freq. to find mode
+largest = freq[rate];
+  for (loop =0; loop < 10; loop++) {  //set values array to zero
+     array[loop] =0;
+  } 
+array[rate] = largest;             //add largest freq. to array 
+   ++count;
+  } 
+else if (freq[rate] == largest) { // if current freq. is largest, add to array 
+  array[rate] = largest;
+  ++count;
+  } 
+for (loop = 1; loop <= freq[rate]; loop++) { // display histogram 
+	printf("#");
+   } 
+   printf("\n\n");
+   } 
+for (loop = 1; loop <= 9; loop++) { //show mode 
+   if ( array[loop] != 0 ) {
+   printf( "The mode is: %d \n\n", loop);} 
+		} //end for loop
+} //end program
